@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -35,15 +37,10 @@ public class FinalResult extends AppCompatActivity {
 
     private Opponent opponent;
     private String user_hands;
-    @BindView(R.id.your_left_hand)
     public ImageView user_left_hand;
-    @BindView(R.id.your_right_hand)
     public ImageView user_right_hand;
-    @BindView(R.id.opponent_left_hand)
     public ImageView opponent_left_hand;
-    @BindView(R.id.opponent_right_hand)
     public ImageView opponent_right_hand;
-    @BindView(R.id.opponent_choose_hand_tv_title)
     public TextView opponent_choose_hand_tv_title;
     @BindView(R.id.final_result_compare_layout)
     public LinearLayout final_result_compare_layout;
@@ -54,6 +51,8 @@ public class FinalResult extends AppCompatActivity {
     private int guess_reuslt;
     private Context context;
     private int round;
+    public  TextView guess_result_tv;
+    private AlertDialog result_dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +90,7 @@ public class FinalResult extends AppCompatActivity {
                     @Override
                     public void run() {
                         progressBar.setVisibility(GONE);
-                        setFinal_result_compare_layout();
-                        final_result_compare_layout.setVisibility(View.VISIBLE);
+                        //final_result_compare_layout.setVisibility(View.VISIBLE);
                         Log.d("guess_resutl",isGuessTrue()+"");
                         compareGuessAndResult();
                     }
@@ -102,20 +100,21 @@ public class FinalResult extends AppCompatActivity {
     }
 
     public void compareGuessAndResult(){
+        //setFinal_result_compare_layout();
         if(isGuessTrue()){
             //user's guess round
             if(round==0||(round%2==0&&round>0)){
-                AlertDialog dialog = getResultDialog("Congratulation","You win!","Try again","Back to menu");
+                AlertDialog dialog = getResultDialog("You win!","","Try again","Back to menu");
                 dialog.show();
             }else{
-                AlertDialog dialog = getResultDialog("Oppps",opponent.getName()+"'s guess match."+"You lose!","Try again","Back to menu");
+                AlertDialog dialog = getResultDialog(opponent.getName()+"'s guess match."+"You lose!","","Try again","Back to menu");
                 dialog.show();
             }
         }else{
             if(round==0||(round%2==0&&round>0)){
-                showLoseDialog("Oppps","You lose!");
+                showLoseDialog("You lose!","");
             }else{
-                showLoseDialog("Oppps",opponent.getName()+"'s guess doesn't match.");
+                showLoseDialog(opponent.getName()+"'s guess doesn't match.","");
             }
         }
     }
@@ -137,19 +136,39 @@ public class FinalResult extends AppCompatActivity {
                 Log.d("set round id:",round+"");
                 startActivity(intent);
             }
-        },3000);
+        },4000);
     }
 
-    public AlertDialog getResultDialog(String title,String message,String positiveBtn,String negativeButton){
+    public AlertDialog getResultDialog(String final_result_winner_text,String message,String positiveBtn_title,String negativeButton_title){
         AlertDialog.Builder bulider = new AlertDialog.Builder(FinalResult.this);
-        bulider.setTitle(title);
-        bulider.setMessage(message);
-        bulider.setCancelable(false);
-        if(positiveBtn!=null && negativeButton!=null){
-            bulider.setPositiveButton(positiveBtn, new DialogInterface.OnClickListener() {
+        final View dialogView = getLayoutInflater().inflate(R.layout.result_dialog,null);
+        Button positiveBtn = dialogView.findViewById(R.id.positiveBtn);
+        Button negativeButton = dialogView.findViewById(R.id.negativeButton);
+        positiveBtn.setText(positiveBtn_title);
+        negativeButton.setText(negativeButton_title);
+        TextView final_result_winner_tv = dialogView.findViewById(R.id.final_result_winner);
+        final_result_winner_tv.setText(final_result_winner_text);
+        TextView user_select_hand_title = dialogView.findViewById(R.id.user_select_hand_title);
+        final_result_winner_tv.setText(final_result_winner_text);
+        SharedPreferences sp = getSharedPreferences(AppConfig.USERDETAIL_SHAREDPREFERENCE,MODE_PRIVATE);
+        String user_name = sp.getString(AppConfig.USER_NAME,"");
+        user_select_hand_title.setText(user_name+"'s hands:");
+        TextView opponent_choose_hand_tv_title = dialogView.findViewById(R.id.opponent_choose_hand_tv_title);
+        opponent_choose_hand_tv_title.setText(opponent.getName()+"'s hands:");
+        user_left_hand = dialogView.findViewById(R.id.your_left_hand);
+        user_right_hand = dialogView.findViewById(R.id.your_right_hand);
+        opponent_left_hand = dialogView.findViewById(R.id.opponent_left_hand);
+        opponent_right_hand = dialogView.findViewById(R.id.opponent_right_hand);
+        guess_result_tv = dialogView.findViewById(R.id.guess_result);
+        guess_result_tv.setText("The guess is:"+Integer.toString(guess_reuslt));
+        setFinal_result_compare_layout();
+        if(positiveBtn_title!=null && negativeButton_title!=null){
+            positiveBtn.setVisibility(View.VISIBLE);
+            negativeButton.setVisibility(View.VISIBLE);
+            positiveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                public void onClick(View v) {
+                    result_dialog.dismiss();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         finishAffinity();
                     }
@@ -157,10 +176,10 @@ public class FinalResult extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-            bulider.setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
+            negativeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                public void onClick(View v) {
+                    result_dialog.dismiss();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         finishAffinity();
                     }
@@ -169,8 +188,10 @@ public class FinalResult extends AppCompatActivity {
                 }
             });
         }
-        AlertDialog dialog = bulider.create();
-        return dialog;
+        bulider.setView(dialogView);
+        result_dialog = bulider.create();
+        result_dialog.setCancelable(false);
+        return result_dialog;
     }
 
     @Override
@@ -183,7 +204,6 @@ public class FinalResult extends AppCompatActivity {
     }
 
     public void setFinal_result_compare_layout(){
-        opponent_choose_hand_tv_title.setText(opponent.getName()+"'s hands");
         setHandsImage(user_left_hand,user_right_hand,user_hands);
         setHandsImage(opponent_left_hand,opponent_right_hand,opponentHands.getLeft()+"_"+opponentHands.getRight());
     }
