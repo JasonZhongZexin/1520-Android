@@ -103,31 +103,41 @@ public class FinalResult extends AppCompatActivity {
 
     public void compareGuessAndResult(){
         if(isGuessTrue()){
-            AlertDialog dialog = getResultDialog("Congratulation","You win!","Try again","Back to menu");
-            dialog.show();
+            //user's guess round
+            if(round==0||(round%2==0&&round>0)){
+                AlertDialog dialog = getResultDialog("Congratulation","You win!","Try again","Back to menu");
+                dialog.show();
+            }else{
+                AlertDialog dialog = getResultDialog("Oppps",opponent.getName()+"'s guess match."+"You lose!","Try again","Back to menu");
+                dialog.show();
+            }
         }else{
-            final AlertDialog dialog = getResultDialog("Oppps","You lose!",null,null);
-            dialog.show();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dialog.dismiss();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        finishAffinity();
-                    }
-                    Intent intent = new Intent(context,MainActivity.class);
-                    intent.putExtra("opponent",opponent);
-                    round = round+1;
-                    intent.putExtra("round",round);
-                    Log.d("set round id:",round+"");
-                    startActivity(intent);
-                }
-            },3000);
+            if(round==0||(round%2==0&&round>0)){
+                showLoseDialog("Oppps","You lose!");
+            }else{
+                showLoseDialog("Oppps",opponent.getName()+"'s guess doesn't match.");
+            }
         }
     }
 
-    public void startNextRound(){
-
+    public void showLoseDialog(String title,String message){
+        final AlertDialog dialog = getResultDialog(title,message,null,null);
+        dialog.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    finishAffinity();
+                }
+                Intent intent = new Intent(context,MainActivity.class);
+                intent.putExtra("opponent",opponent);
+                round = round+1;
+                intent.putExtra("round",round);
+                Log.d("set round id:",round+"");
+                startActivity(intent);
+            }
+        },3000);
     }
 
     public AlertDialog getResultDialog(String title,String message,String positiveBtn,String negativeButton){
