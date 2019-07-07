@@ -1,6 +1,7 @@
 package com.game.a1520;
 
 import android.app.AlertDialog;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,12 +19,15 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.game.a1520.database.GamesLogDb;
+import com.game.a1520.model.GamesLog;
 import com.game.a1520.model.NetworkConnection;
 import com.game.a1520.model.Opponent;
 import com.game.a1520.model.OpponentHands;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,6 +58,7 @@ public class FinalResult extends AppCompatActivity {
     public  TextView guess_result_tv;
     private AlertDialog result_dialog;
     private String roundOwner;
+    private GamesLogDb gamesLogDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +113,12 @@ public class FinalResult extends AppCompatActivity {
                 roundOwner = "user";
                 AlertDialog dialog = getResultDialog("You win!","","Try again","Back to menu");
                 dialog.show();
+                updateGameLog(true);
             }else{
                 roundOwner = "opponent";
                 AlertDialog dialog = getResultDialog(opponent.getName()+"'s guess match."+"You lose!","","Try again","Back to menu");
                 dialog.show();
+                updateGameLog(false);
             }
         }else{
             if(round==0||(round%2==0&&round>0)){
@@ -288,5 +295,23 @@ public class FinalResult extends AppCompatActivity {
 
     private void exitActivity(){
         this.finish();
+    }
+
+    /**
+     * add a new gamelog if any user win the game
+     * @param winOrLost true:user win, false: opponent win
+     */
+    private void updateGameLog(Boolean winOrLost){
+        gamesLogDb = Room.databaseBuilder(this,GamesLogDb.class,AppConfig.DATABASENAME).allowMainThreadQueries().build();
+        Calendar calendar = Calendar.getInstance();
+        String gameDate = String.format("%04d",calendar.get(Calendar.YEAR))+String.format("%02d",calendar.get(Calendar.MONTH)+1)+String.format("%02d",calendar.get(Calendar.DAY_OF_MONTH));
+        String gaemTime = calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE);
+        GamesLog log;
+        if(winOrLost){
+            log = new GamesLog(gameDate,gaemTime,opponent.getName(),"Win");
+        }else{
+            log = new GamesLog(gameDate,gaemTime,opponent.getName(),"Lost");
+        }
+        gamesLogDb.dao().addGameLog(log);
     }
 }

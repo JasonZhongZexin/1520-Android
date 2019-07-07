@@ -61,6 +61,14 @@ public class Launcher extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        mHistory_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent  = new Intent(v.getContext(),GameHistory.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private boolean isRegisted(){
