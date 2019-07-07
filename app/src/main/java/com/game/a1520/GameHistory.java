@@ -7,6 +7,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.TextView;
 
 import com.game.a1520.adapter.RecyclerView_Adapter;
 import com.game.a1520.database.GamesLogDb;
@@ -26,6 +28,8 @@ public class GameHistory extends AppCompatActivity {
     private RecyclerView_Adapter adapter;
     private GamesLogDb gamesLogDb;
     private List<GamesLog> logs = new ArrayList<>();
+    @BindView(R.id.empty_game_history_tv)
+    public TextView empty_game_history_tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +38,16 @@ public class GameHistory extends AppCompatActivity {
         ButterKnife.bind(this);
         gamesLogDb = Room.databaseBuilder(this, GamesLogDb.class, AppConfig.DATABASENAME).allowMainThreadQueries().build();
         logs = gamesLogDb.dao().getAllLogs();
-        adapter = new RecyclerView_Adapter(this,logs);
-        layoutManager = new LinearLayoutManager(this);
-        logs_view.setLayoutManager(layoutManager);
-        logs_view.setAdapter(adapter);
-        logs_view.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        if(logs.size()>0){
+            adapter = new RecyclerView_Adapter(this,logs);
+            layoutManager = new LinearLayoutManager(this);
+            logs_view.setLayoutManager(layoutManager);
+            logs_view.setAdapter(adapter);
+            logs_view.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        }else{
+            empty_game_history_tv.setVisibility(View.VISIBLE);
+            logs_view.setVisibility(View.GONE);
+        }
     }
 
     @Override
