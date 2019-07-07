@@ -53,6 +53,7 @@ public class FinalResult extends AppCompatActivity {
     private int round;
     public  TextView guess_result_tv;
     private AlertDialog result_dialog;
+    private String roundOwner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,16 +105,20 @@ public class FinalResult extends AppCompatActivity {
         if(isGuessTrue()){
             //user's guess round
             if(round==0||(round%2==0&&round>0)){
+                roundOwner = "user";
                 AlertDialog dialog = getResultDialog("You win!","","Try again","Back to menu");
                 dialog.show();
             }else{
+                roundOwner = "opponent";
                 AlertDialog dialog = getResultDialog(opponent.getName()+"'s guess match."+"You lose!","","Try again","Back to menu");
                 dialog.show();
             }
         }else{
             if(round==0||(round%2==0&&round>0)){
-                showLoseDialog("You lose!","");
+                roundOwner = "user";
+                showLoseDialog("You guess doesn't match!","");
             }else{
+                roundOwner = "user";
                 showLoseDialog(opponent.getName()+"'s guess doesn't match.","");
             }
         }
