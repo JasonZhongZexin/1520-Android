@@ -117,8 +117,9 @@ public class FinalResult extends AppCompatActivity {
                     }
                     Intent intent = new Intent(context,MainActivity.class);
                     intent.putExtra("opponent",opponent);
-                    round++;
+                    round = round+1;
                     intent.putExtra("round",round);
+                    Log.d("set round id:",round+"");
                     startActivity(intent);
                 }
             },3000);
@@ -221,6 +222,9 @@ public class FinalResult extends AppCompatActivity {
      */
     public Boolean isGuessTrue(){
         countSum();
+        if(guess_reuslt==-1)
+            guess_reuslt = opponentHands.getGuess();
+        Log.d("opponenetGuess",guess_reuslt+"");
         return final_sum == guess_reuslt;
     }
 

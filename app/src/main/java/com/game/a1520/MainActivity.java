@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,13 +43,28 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.user_choose_hands_layout)
     public LinearLayout user_choose_hands_layout;
     private Opponent opponent;
+    private int round;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        attemptToLoadOpponentInfo();
+        Intent intent = getIntent();
+        round = intent.getIntExtra("round",-1);
+        if(round == -1){
+            round = 0;
+        }
+        Log.d("round id:",round+"");
+        if(round==0){
+            attemptToLoadOpponentInfo();
+        }else{
+            opponent = (Opponent)intent.getSerializableExtra("opponent");
+            updateOpponentInfo(opponent.getID(),opponent.getName(),opponent.getCountry());
+            progressBar.setVisibility(GONE);
+            opponent_info_layout.setVisibility(View.VISIBLE);
+            user_choose_hands_layout.setVisibility(View.VISIBLE);
+        }
     }
 
     private void attemptToLoadOpponentInfo(){
@@ -131,10 +147,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setUser_choose_hands(String hands){
-        Intent intent = new Intent(this,GuessSum.class);
-        intent.putExtra("user_hands",hands);
-        intent.putExtra("opponent", opponent);
-        startActivity(intent);
+        if(round==0||(round%2==0&&round>0)){
+            Intent intent = new Intent(this,GuessSum.class);
+            intent.putExtra("user_hands",hands);
+            intent.putExtra("opponent", opponent);
+            intent.putExtra("round",round);
+            startActivity(intent);
+        }else{
+            Intent intent = new Intent(this,FinalResult.class);
+            intent.putExtra("user_hands",hands);
+            intent.putExtra("opponent", opponent);
+            intent.putExtra("round",round);
+            startActivity(intent);
+        }
     }
 
     @Override

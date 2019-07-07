@@ -21,6 +21,7 @@ public class GuessSum extends AppCompatActivity {
     public TextView opponentCountry_tv;
     private Opponent opponent;
     private String user_hands;
+    private int round;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,10 @@ public class GuessSum extends AppCompatActivity {
         setContentView(R.layout.activity_guess_sum);
         ButterKnife.bind(this);
         Intent intent = getIntent();
+        round = intent.getIntExtra("round",-1);
+        if(round == -1){
+            round = 0;
+        }
         opponent = (Opponent) intent.getSerializableExtra("opponent");
         user_hands = intent.getStringExtra("user_hands");
         updateOpponentInfo(opponent.getID(),opponent.getName(),opponent.getCountry());
@@ -64,6 +69,7 @@ public class GuessSum extends AppCompatActivity {
         intent.putExtra("opponent",opponent);
         intent.putExtra("guess_reuslt",guessResult);
         intent.putExtra("user_hands",user_hands);
+        intent.putExtra("round",round);
         startActivity(intent);
     }
 
