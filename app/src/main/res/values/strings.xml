@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">1520</string>
+    <string name="welcome_title">Welcome to 15 20</string>
+    <string name="register_btn">Registration</string>
+    <string name="start_btn">Start Game</string>
+    <string name="history_btn">History</string>
+    <string name="edit_account_btn">Edit user</string>
+    <string name="result_statistical_btn">Statistics</string>
+    <string name="email_et_title">Email</string>
+    <string name="name_et_title">Name</string>
+    <string name="Date_of_birth_title">Date of Birth</string>
+    <string name="phone_et_title">Phone number</string>
+    <string name="registration_title">Registration</string>
+    <string name="edit_user_title">Account information</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="name_empty_error">Name could not be empty.</string>
+    <string name="email_empty_error">Email could not be empty.</string>
+    <string name="dob_empty_error">Date of Birth could not be empty.</string>
+    <string name="phone_empty_error">Phone number could not be empty.</string>
+    <string name="opponent_name_title">Name: </string>
+    <string name="opponent_ID_title">ID: </string>
+    <string name="opponent_Country_title">Country: </string>
+    <string name="network_connection_error_title">Connection Fail</string>
+    <string name="network_connection_error_message">Fail to find a opponent from the server. Please check your network connection and try again.</string>
+    <string name="network_connection_error_message1">Fail to load the opponent hands from the server. Please check your network connection and try again.</string>
+    <string name="retry_btn">Try again</string>
+    <string name="choose_hands_tv_title">Please choose your hands</string>
+    <string name="guess_sum_tv_title">Guess a final sum result</string>
+</resources>
