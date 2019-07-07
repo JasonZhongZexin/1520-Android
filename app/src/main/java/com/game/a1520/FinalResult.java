@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -62,8 +63,7 @@ public class FinalResult extends AppCompatActivity {
     private AlertDialog result_dialog;
     private String roundOwner;
     private GamesLogDb gamesLogDb;
-    private static MediaPlayer lose_mp = new MediaPlayer();
-    private static MediaPlayer win_mp = new MediaPlayer();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,20 +77,6 @@ public class FinalResult extends AppCompatActivity {
         guess_reuslt = intent.getIntExtra("guess_reuslt",-1);
         attemptToLoadOpponentHnads();
         context = this;
-        try {
-            AssetFileDescriptor afd = getApplicationContext().getResources().openRawResourceFd(R.raw.youlose);
-            lose_mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
-            lose_mp.setAudioStreamType(AudioManager.STREAM_RING);
-            afd.close();
-            lose_mp.prepare();
-            afd = getApplicationContext().getResources().openRawResourceFd(R.raw.youwin);
-            win_mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
-            win_mp.setAudioStreamType(AudioManager.STREAM_RING);
-            afd.close();
-            win_mp.prepare();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     public void attemptToLoadOpponentHnads(){
@@ -132,21 +118,13 @@ public class FinalResult extends AppCompatActivity {
                 roundOwner = "user";
                 AlertDialog dialog = getResultDialog("You win!","","Try again","Back to menu");
                 dialog.show();
-                if(win_mp.isPlaying())
-                    win_mp.pause();
-                win_mp.seekTo(0);
-                win_mp.setVolume(1000,1000);
-                win_mp.start();
+                SoundPoolUtils.getInstnce(this).play("win",1,50,0);
                 updateGameLog(true);
             }else{
                 roundOwner = "opponent";
                 AlertDialog dialog = getResultDialog(opponent.getName()+"'s guess match."+"You lose!","","Try again","Back to menu");
                 dialog.show();
-                if(lose_mp.isPlaying())
-                    lose_mp.pause();
-                lose_mp.seekTo(0);
-                lose_mp.setVolume(1000,1000);
-                lose_mp.start();
+                SoundPoolUtils.getInstnce(this).play("lost",1,50,0);
                 updateGameLog(false);
             }
         }else{
@@ -343,5 +321,10 @@ public class FinalResult extends AppCompatActivity {
             log = new GamesLog(gameDate,gaemTime,opponent.getName(),"Lost");
         }
         gamesLogDb.dao().addGameLog(log);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

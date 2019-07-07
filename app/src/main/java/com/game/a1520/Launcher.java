@@ -2,9 +2,13 @@ package com.game.a1520;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,11 +28,15 @@ public class Launcher extends AppCompatActivity {
     public Button mEditUser_btn;
     @BindView(R.id.result_statistical_btn)
     public Button mResult_statistical_btn;
+    SoundPoolUtils soundPoolUtils;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
         ButterKnife.bind(this);
+        soundPoolUtils = SoundPoolUtils.getInstnce(this);
     }
 
     @Override
@@ -76,6 +84,8 @@ public class Launcher extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        soundPoolUtils.stop();
+        soundPoolUtils.play("bgm",0.3f,1,-1 );
     }
 
     private boolean isRegisted(){
@@ -89,5 +99,43 @@ public class Launcher extends AppCompatActivity {
     public void createUser(View view) {
         Intent intent = new Intent(this,Registration.class);
         startActivity(intent);
+    }
+
+/*
+    @Override
+    protected void onStop() {
+        soundPoolUtils.stop();
+        super.onStop();
+    }
+*/
+
+    @Override
+    protected void onDestroy() {
+        soundPoolUtils.stop();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        SoundPoolUtils.getInstnce(this).stop();
+        SoundPoolUtils.getInstnce(this).play("bgm",0.3f,1,-1 );
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        SoundPoolUtils.getInstnce(this).stop();
+        SoundPoolUtils.getInstnce(this).play("bgm",0.3f,1,-1 );
+        super.onRestart();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK||keyCode ==KeyEvent.KEYCODE_HOME){
+            onPause();
+            soundPoolUtils.stop();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -148,4 +148,25 @@ public class EditUser extends AppCompatActivity {
             Toast.makeText(this,"Account has been updated!",Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    protected void onStart() {
+        SoundPoolUtils.getInstnce(this).stop();
+        SoundPoolUtils.getInstnce(this).play("bgm",0.3f,1,-1 );
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        SoundPoolUtils.getInstnce(this).stop();
+        SoundPoolUtils.getInstnce(this).play("bgm",0.3f,1,-1 );
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        SoundPoolUtils.getInstnce(this).stop();
+        SoundPoolUtils.getInstnce(this).play("bgm",0.3f,1,-1 );
+        super.onRestart();
+    }
 }
