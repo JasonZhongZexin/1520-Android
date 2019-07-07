@@ -132,8 +132,8 @@ public class Launcher extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==KeyEvent.KEYCODE_BACK||keyCode ==KeyEvent.KEYCODE_HOME){
-            onPause();
             soundPoolUtils.stop();
+            onStop();
             return true;
         }
         return super.onKeyDown(keyCode, event);
