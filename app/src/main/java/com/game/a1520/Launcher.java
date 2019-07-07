@@ -69,6 +69,13 @@ public class Launcher extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        mResult_statistical_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(),StatisticsResult.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private boolean isRegisted(){

@@ -21,4 +21,6 @@ public interface DAO {
     @Query("select * from GamesLog")
     public List<GamesLog> getAllLogs();
 
+    @Query("select COUNT(:column_name) from GamesLog where winOrLost = :result_type")
+    public int getResultCOunt(String column_name,String result_type);
 }

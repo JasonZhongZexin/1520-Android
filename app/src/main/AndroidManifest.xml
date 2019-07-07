@@ -11,8 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GameHistory"
+        <activity android:name=".StatisticsResult"
             android:parentActivityName=".Launcher"></activity>
+        <activity
+            android:name=".GameHistory"
+            android:parentActivityName=".Launcher" />
         <activity android:name=".FinalResult" />
         <activity android:name=".GuessSum" />
         <activity
